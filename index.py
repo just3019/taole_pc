@@ -1,15 +1,23 @@
+import time
+
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+
+
+def write(s):
+    f = open("test.log", "a")
+    f.write('%s\n' % s.strip())
+    f.close()
 
 
 # 启动driver
 def init_web_driver():
     global driver
     chrome_options = Options()
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('window-size=800x600')
+    chrome_options.add_argument('blink-settings=imagesEnabled=false')
     driver_path = r'./chromedriver_mac'  # 这里放的就是下载的driver本地路径
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_path)
     driver.implicitly_wait(10)
@@ -20,19 +28,11 @@ def close_web_driver():
     driver.quit()
 
 
-if __name__ == '__main__':
-    init_web_driver()
+def sn_search_list(keyword):
     try:
-        driver.get("https://www.suning.com/")
-        text = driver.find_element_by_id("searchKeywords")
-        search = driver.find_element_by_id("searchSubmit")
-        text.send_keys("iphonexsmax")
-        search.click()
-        driver.save_screenshot("screen.png")
+        driver.get("https://search.suning.com/%s" % keyword)
         html = BeautifulSoup(driver.page_source, "lxml")
         products = html.select(".item-wrap")
-        # products = driver.find_elements_by_xpath('//div[@class="item-bg"]')
-        # print("products:%s" % products.count())
         num = 0
         for product in products:
             id = product["id"]
@@ -46,4 +46,29 @@ if __name__ == '__main__':
     except RuntimeError as e:
         print("错误：%s" % e)
 
-    close_web_driver()
+
+def jd_search_list(keyword):
+    try:
+        init_web_driver()
+        driver.get("https://search.jd.com/Search?keyword=%s" % keyword)
+        products = driver.find_elements_by_class_name("gl-item")
+        for p in products:
+            id = p.get_attribute("data-sku")
+            name = p.find_element_by_class_name("p-name").text
+            price = p.find_element_by_tag_name("i").text
+            url = p.find_element_by_class_name("p-name").find_element_by_tag_name("a").get_attribute("href")
+            write("%s|%s|%s|%s\n" % (id, name, price, url))
+    except RuntimeError as e:
+        print("错误：%s" % e)
+    finally:
+        close_web_driver()
+
+
+if __name__ == '__main__':
+    t = time.time()
+    for i in range(0, 5):
+        t0 = time.time()
+        jd_search_list("iphonexsmax")
+        print("第%s次完成,耗时%s" % (i, time.time() - t0))
+    t1 = time.time()
+    print(t1 - t)
