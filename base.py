@@ -8,6 +8,6 @@ def printf(s):
 
 
 def write(file_path, s):
-    f = open(file_path, "a")
+    f = open(file_path, "a", encoding="utf-8")
     f.write('%s\n' % s.strip())
     f.close()

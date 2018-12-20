@@ -6,7 +6,6 @@ import requests
 import base
 from base import printf, write
 from taole import feedbacks
-from thread_pool import ThreadPool
 
 
 def sn_search_list(keyword):
