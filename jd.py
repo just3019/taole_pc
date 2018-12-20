@@ -8,7 +8,11 @@ from web_driver import init_web_driver, close_web_driver
 
 def jd_search_list(keyword):
     try:
-        driver.get("https://search.jd.com/Search?keyword=%s" % keyword)
+        driver.get("https://www.jd.com")
+        key = driver.find_element_by_id("key")
+        btn = driver.find_element_by_class_name("button")
+        key.send_keys(keyword)
+        btn.click()
         products = driver.find_elements_by_class_name("gl-item")
         feedback_list = []
         for p in products:
@@ -21,13 +25,13 @@ def jd_search_list(keyword):
             price_dict_list.append(price_dict)
             dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
                     "feedbackPrices": price_dict_list}
-            printf(dict)
+            # printf(dict)
             feedback_list.append(dict)
-            write("test.log", "%s\n" % (dict))
         params = {"feedbacks": feedback_list}
         p = json.dumps(params)
-        printf(p)
+        # printf(p)
         feedbacks(p)
+        write("jd-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % params)
     except RuntimeError as e:
         printf("错误：%s" % e)
 
@@ -39,6 +43,7 @@ def jd_deal(keyword, num):
         t = time.time()
         for i in range(0, num):
             jd_search_list(keyword)
+            time.sleep(10)
         t1 = time.time()
         printf("本次任务完成 %s" % (t1 - t))
     finally:

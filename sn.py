@@ -1,8 +1,12 @@
+import json
 import time
 
 import requests
 
-from base import printf
+import base
+from base import printf, write
+from taole import feedbacks
+from thread_pool import ThreadPool
 
 
 def sn_search_list(keyword):
@@ -23,7 +27,27 @@ def sn_search_list(keyword):
         )
         response = requests.get('https://search.suning.com/emall/mobile/clientSearch.jsonp', headers=headers,
                                 params=params)
-        print(response.text)
+        # print(response.text)
+        result = json.loads(response.text)
+        goods = result["goods"]
+        feedback_list = []
+        for g in goods:
+            id = "%s-%s" % (g["salesCode10"], g["catentryId"])
+            name = g["catentdesc"]
+            price = g["price"]
+            url = "https://product.suning.com/%s/%s.html" % (g["salesCode10"], g["catentryId"])
+            price_dict_list = []
+            price_dict = {"price": price}
+            price_dict_list.append(price_dict)
+            dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
+                    "feedbackPrices": price_dict_list}
+            # printf(dict)
+            feedback_list.append(dict)
+        params = {"feedbacks": feedback_list}
+        p = json.dumps(params)
+        # printf(p)
+        feedbacks(p)
+        write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % params)
         return response.text
     except RuntimeError as e:
         print("错误：%s" % e)
@@ -35,7 +59,14 @@ def sn_search_list_thread(keyword, num):
         t = time.time()
         for i in range(0, num):
             sn_search_list(keyword)
+            time.sleep(10)
         t1 = time.time()
         printf("本次任务完成 %s" % (t1 - t))
     except RuntimeError as e:
         print(e)
+
+
+if __name__ == '__main__':
+    for i in range(0, 100):
+        base.printf("执行第%s轮任务" % i)
+        sn_search_list_thread("西门子冰箱", 100)
