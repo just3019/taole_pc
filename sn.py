@@ -3,7 +3,6 @@ import time
 
 import requests
 
-import base
 from base import printf, write
 from taole import feedbacks
 from thread_pool import ThreadPool
@@ -54,7 +53,6 @@ def sn_search_list(keyword):
 
 
 def sn_search_list_thread(keyword, num):
-    global driver
     try:
         t = time.time()
         for i in range(0, num):
@@ -67,9 +65,13 @@ def sn_search_list_thread(keyword, num):
 
 
 if __name__ == '__main__':
+    key = input("输入搜索的关键字：")
+    count = eval(input("创建几个任务："))
+    num = eval(input("一个任务循环多少次："))
+    t = time.time()
     Tp = ThreadPool(1)
-    for i in range(0, 100):
-        base.printf("执行第%s轮任务" % i)
-        Tp.add_task(sn_search_list_thread, "西门子冰箱", 100)
+    for i in range(0, count):
+        printf("执行第%s轮任务" % i)
+        Tp.add_task(sn_search_list_thread, key, num)
     Tp.wait_completion()
-
+    printf(time.time() - t)

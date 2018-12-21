@@ -3,6 +3,7 @@ import time
 
 from base import printf, write
 from taole import feedbacks
+from thread_pool import ThreadPool
 from web_driver import init_web_driver, close_web_driver
 
 
@@ -38,16 +39,16 @@ def jd_search_list(keyword):
 
 def jd_deal(keyword, num):
     global driver
+    t = time.time()
     try:
         driver = init_web_driver()
-        t = time.time()
         for i in range(0, num):
             jd_search_list(keyword)
             time.sleep(10)
-        t1 = time.time()
-        printf("本次任务完成 %s" % (t1 - t))
     finally:
         close_web_driver(driver)
+        t1 = time.time()
+        printf("本次任务完成 %s" % (t1 - t))
 
 
 if __name__ == '__main__':
@@ -55,7 +56,9 @@ if __name__ == '__main__':
     count = eval(input("创建几个任务："))
     num = eval(input("一个任务循环多少次："))
     t = time.time()
+    Tp = ThreadPool(1)
     for i in range(0, count):
-        printf("开始第%s个任务" % i)
-        jd_deal(key, num)
+        printf("执行第%s轮任务" % i)
+        Tp.add_task(jd_deal, key, num)
+    Tp.wait_completion()
     printf(time.time() - t)
