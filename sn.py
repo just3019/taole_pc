@@ -6,6 +6,7 @@ import requests
 import base
 from base import printf, write
 from taole import feedbacks
+from thread_pool import ThreadPool
 
 
 def sn_search_list(keyword):
@@ -66,6 +67,9 @@ def sn_search_list_thread(keyword, num):
 
 
 if __name__ == '__main__':
+    Tp = ThreadPool(1)
     for i in range(0, 100):
         base.printf("执行第%s轮任务" % i)
-        sn_search_list_thread("西门子冰箱", 100)
+        Tp.add_task(sn_search_list_thread, "西门子冰箱", 100)
+    Tp.wait_completion()
+
