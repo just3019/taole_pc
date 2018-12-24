@@ -19,4 +19,4 @@ import sn
 # print(response.text)
 
 if __name__ == '__main__':
-    sn.sn_search_list("海尔冰箱")
+    sn.sn_search_list("iphonex")
