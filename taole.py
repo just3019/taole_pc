@@ -1,14 +1,18 @@
 import json
+import time
 
 import requests
 
 
 def feedbacks(params):
     headers = {'Content-Type': 'application/json'}
-    # response = requests.post(url="http://taole.luckygrra.com/task/feedbacks", data=params, headers=headers)
-    response = requests.post(url="http://localhost:21000/task/feedbacks", data=params, headers=headers)
+    response = requests.post(url="http://taole.luckygrra.com/task/feedbacks", data=params, headers=headers)
+    # response = requests.post(url="http://localhost:21000/task/feedbacks", data=params, headers=headers)
     result = json.loads(response.text)
-    if result["status"] == 1000:
-        return True
+    if "status" in response.text:
+        if result["status"] == 1000:
+            return True
+        else:
+            return False
     else:
-        return False
+        time.sleep(10)
