@@ -19,4 +19,4 @@ import sn
 # print(response.text)
 
 if __name__ == '__main__':
-    sn.sn_search_list("iphonex")
+    sn.sn_search_list("macbookpro15英寸")
