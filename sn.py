@@ -21,7 +21,7 @@ def sn_search_list(keyword):
         params = (
             ('ct', "-1"),  # ct:是否苏宁服务  -1：非    2：是
             ('keyword', keyword),
-            ('ps', '20'),
+            ('ps', '40'),
             ('set', '5'),
         )
         response = requests.get('https://search.suning.com/emall/mobile/clientSearch.jsonp', headers=headers,
