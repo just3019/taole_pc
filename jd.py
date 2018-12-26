@@ -46,7 +46,7 @@ def jd_deal(keyword, num):
         driver = init_web_driver()
         for i in range(0, num):
             jd_search_list(keyword)
-            time.sleep(20)
+            time.sleep(10)
     finally:
         close_web_driver(driver)
         t1 = time.time()
