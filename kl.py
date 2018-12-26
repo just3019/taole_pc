@@ -33,14 +33,14 @@ paramsKL = (
 
 def kl_search_list(keyword):
     keylist = keyword.split(",")
-    for key in keylist:
+    for k in keylist:
         try:
             data = {
                 "search": {
                     "isFilter": 0,
                     "isSearch": 1,
                     "stock": 0,
-                    "key": key,
+                    "key": k,
                     "searchRefer": {
                         "searchRefer": "searchbutton"
                     },
@@ -76,8 +76,8 @@ def kl_search_list(keyword):
             p = json.dumps(params)
             # printf(p)
             feedbacks(p)
-            write("kl-%s%s.log" % (key, time.strftime("%Y%m%d")), "%s\n" % params)
-            return response.text
+            write("kl-%s%s.log" % (k, time.strftime("%Y%m%d")), "%s\n" % params)
+            time.sleep(1)
         except RuntimeError as e:
             printf("错误：%s" % e)
 

@@ -50,8 +50,7 @@ def sn_search_list(keyword):
             # printf(p)
             feedbacks(p)
             write("sn-%s%s.log" % (key, time.strftime("%Y%m%d")), "%s\n" % params)
-            time.sleep(3)
-            return response.text
+            time.sleep(1)
         except RuntimeError as e:
             print("错误：%s" % e)
 
