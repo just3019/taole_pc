@@ -32,7 +32,7 @@ def jd_search_list(keyword):
                 feedback_list.append(dict)
             params = {"feedbacks": feedback_list}
             p = json.dumps(params)
-            printf(p)
+            # printf(p)
             feedbacks(p)
             write("jd-%s%s.log" % (k, time.strftime("%Y%m%d")), "%s\n" % params)
         except RuntimeError as e:
