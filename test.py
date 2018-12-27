@@ -13,3 +13,4 @@ print(",".join(seg_list))
 
 seg_list = jieba.cut_for_search(text)
 print(",".join(seg_list))
+
