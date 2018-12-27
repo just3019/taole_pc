@@ -65,6 +65,7 @@ def sn_search_list_thread(keyword, lowprice, highprice, num):
         print(e)
 
 
+
 if __name__ == '__main__':
     sn_search_list("iphonexsmax", 2000, 10000)
     # key = input("输入搜索的关键字：")
