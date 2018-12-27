@@ -16,7 +16,7 @@ headers = {
 }
 
 
-def sn_search_list(keyword, lowprice, highprice):
+def sn_search_list(keyword, lowprice, highprice, taskId=0):
     try:
         params = (
             ('ct', "-1"),  # ct:是否苏宁服务  -1：非    2：是
@@ -40,7 +40,7 @@ def sn_search_list(keyword, lowprice, highprice):
             price_dict_list = []
             price_dict = {"price": price}
             price_dict_list.append(price_dict)
-            dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
+            dict = {"taskId": taskId, "url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
                     "feedbackPrices": price_dict_list}
             # printf(dict)
             feedback_list.append(dict)
@@ -63,7 +63,6 @@ def sn_search_list_thread(keyword, lowprice, highprice, num):
         printf("本次任务完成 %s" % (t1 - t))
     except RuntimeError as e:
         print(e)
-
 
 
 if __name__ == '__main__':

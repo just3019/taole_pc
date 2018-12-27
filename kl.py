@@ -30,7 +30,7 @@ paramsKL = (
 )
 
 
-def kl_search_list(keyword, lowprice, highprice):
+def kl_search_list(keyword, lowprice, highprice, taskId=0):
     try:
         data = {
             "search": {
@@ -72,7 +72,7 @@ def kl_search_list(keyword, lowprice, highprice):
             price_dict_list = []
             price_dict = {"price": price}
             price_dict_list.append(price_dict)
-            dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
+            dict = {"taskId": taskId, "url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
                     "feedbackPrices": price_dict_list}
             # printf(dict)
             feedback_list.append(dict)
