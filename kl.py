@@ -5,7 +5,6 @@ import requests
 
 from base import printf, write
 from taole import feedbacks
-from thread_pool import ThreadPool
 
 headers = {
     'Host': 'gw.kaola.com',
@@ -32,61 +31,59 @@ paramsKL = (
 
 
 def kl_search_list(keyword, lowprice, highprice):
-    keylist = keyword.split(",")
-    for k in keylist:
-        try:
-            data = {
-                "search": {
-                    "isFilter": 0,
-                    "isSearch": 1,
-                    "stock": 0,
-                    "key": k,
-                    "shownActivityNum": -1,
-                    "spellCheck": 1,
-                    "filterTypeList": [{
-                        "type": 2,
-                        "priceRanges": [{
-                            "highPrice": highprice,
-                            "lowPrice": lowprice
-                        }]
-                    }],
-                    "sortType": {
-                        "type": 4,
-                        "isDesc": 0
-                    }
-                },
-                "pageSize": 40,
-                "pageNo": 1
-            }
-            klurl = 'https://gw.kaola.com/gw/search/list/goods'
-            response = requests.post(klurl, headers=headers, params=paramsKL, data=json.dumps(data))
-            printf(response.text)
-            result = json.loads(response.text)
-            goods = result["body"]["result"]["itemList"]
-            feedback_list = []
-            for g in goods:
-                if "goodsModuleItem" not in g:
-                    continue
-                gg = g["goodsModuleItem"]
-                id = gg["goodsId"]
-                name = gg["title"]
-                price = gg["stringPrice"]
-                url = "https://goods.kaola.com/product/%s.html" % id
-                price_dict_list = []
-                price_dict = {"price": price}
-                price_dict_list.append(price_dict)
-                dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
-                        "feedbackPrices": price_dict_list}
-                # printf(dict)
-                feedback_list.append(dict)
-            params = {"feedbacks": feedback_list}
-            p = json.dumps(params)
-            # printf(p)
-            feedbacks(p)
-            write("kl-%s%s.log" % (k, time.strftime("%Y%m%d")), "%s\n" % params)
-            time.sleep(1)
-        except RuntimeError as e:
-            printf("错误：%s" % e)
+    try:
+        data = {
+            "search": {
+                "isFilter": 0,
+                "isSearch": 1,
+                "stock": 0,
+                "key": keyword,
+                "shownActivityNum": -1,
+                "spellCheck": 1,
+                "filterTypeList": [{
+                    "type": 2,
+                    "priceRanges": [{
+                        "highPrice": highprice,
+                        "lowPrice": lowprice
+                    }]
+                }],
+                "sortType": {
+                    "type": 4,
+                    "isDesc": 0
+                }
+            },
+            "pageSize": 40,
+            "pageNo": 1
+        }
+        klurl = 'https://gw.kaola.com/gw/search/list/goods'
+        response = requests.post(klurl, headers=headers, params=paramsKL, data=json.dumps(data))
+        # printf(response.text)
+        result = json.loads(response.text)
+        goods = result["body"]["result"]["itemList"]
+        feedback_list = []
+        for g in goods:
+            if "goodsModuleItem" not in g:
+                continue
+            gg = g["goodsModuleItem"]
+            id = gg["goodsId"]
+            name = gg["title"]
+            price = gg["stringPrice"]
+            url = "https://goods.kaola.com/product/%s.html" % id
+            price_dict_list = []
+            price_dict = {"price": price}
+            price_dict_list.append(price_dict)
+            dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
+                    "feedbackPrices": price_dict_list}
+            # printf(dict)
+            feedback_list.append(dict)
+        params = {"feedbacks": feedback_list}
+        p = json.dumps(params)
+        # printf(p)
+        feedbacks(p)
+        write("kl-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % params)
+        time.sleep(1)
+    except RuntimeError as e:
+        printf("错误：%s" % e)
 
 
 def kl_deal(keyword, lowprice, highprice, num):
@@ -102,7 +99,7 @@ def kl_deal(keyword, lowprice, highprice, num):
 
 
 if __name__ == '__main__':
-    kl_search_list("iphonexsmax", 2000, 10000)
+    kl_search_list("iphonexsmax", 2000)
     # key = input("输入搜索的关键字：")
     # count = eval(input("创建几个任务："))
     # num = eval(input("一个任务循环多少次："))

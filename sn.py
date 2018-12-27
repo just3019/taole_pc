@@ -5,7 +5,6 @@ import requests
 
 from base import printf, write
 from taole import feedbacks
-from thread_pool import ThreadPool
 
 headers = {
     'Host': 'search.suning.com',
@@ -18,43 +17,41 @@ headers = {
 
 
 def sn_search_list(keyword, lowprice, highprice):
-    keylist = keyword.split(",")
-    for key in keylist:
-        try:
-            params = (
-                ('ct', "-1"),  # ct:是否苏宁服务  -1：非    2：是
-                ('keyword', key),
-                ('ps', '40'),
-                ('set', '5'),
-                ('cf', '%s_%s' % (lowprice, highprice)),
-                ('st', '9'),  # st:排序   9：价格升序  10：价格倒序  0：综合排序 8：销量排序
-            )
-            snUrl = 'https://search.suning.com/emall/mobile/clientSearch.jsonp'
-            response = requests.get(snUrl, headers=headers, params=params)
-            print(response.text)
-            result = json.loads(response.text)
-            goods = result["goods"]
-            feedback_list = []
-            for g in goods:
-                id = "%s-%s" % (g["salesCode10"], g["catentryId"])
-                name = g["catentdesc"]
-                price = g["price"]
-                url = "https://product.suning.com/%s/%s.html" % (g["salesCode10"], g["catentryId"])
-                price_dict_list = []
-                price_dict = {"price": price}
-                price_dict_list.append(price_dict)
-                dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
-                        "feedbackPrices": price_dict_list}
-                # printf(dict)
-                feedback_list.append(dict)
-            params = {"feedbacks": feedback_list}
-            p = json.dumps(params)
-            # printf(p)
-            feedbacks(p)
-            write("sn-%s%s.log" % (key, time.strftime("%Y%m%d")), "%s\n" % params)
-            time.sleep(1)
-        except RuntimeError as e:
-            print("错误：%s" % e)
+    try:
+        params = (
+            ('ct', "-1"),  # ct:是否苏宁服务  -1：非    2：是
+            ('keyword', keyword),
+            ('ps', '40'),
+            ('set', '5'),
+            ('cf', '%s_%s' % (lowprice, highprice)),
+            ('st', '9'),  # st:排序   9：价格升序  10：价格倒序  0：综合排序 8：销量排序
+        )
+        snUrl = 'https://search.suning.com/emall/mobile/clientSearch.jsonp'
+        response = requests.get(snUrl, headers=headers, params=params)
+        # printf(response.text)
+        result = json.loads(response.text)
+        goods = result["goods"]
+        feedback_list = []
+        for g in goods:
+            id = "%s-%s" % (g["salesCode10"], g["catentryId"])
+            name = g["catentdesc"]
+            price = g["price"]
+            url = "https://product.suning.com/%s/%s.html" % (g["salesCode10"], g["catentryId"])
+            price_dict_list = []
+            price_dict = {"price": price}
+            price_dict_list.append(price_dict)
+            dict = {"url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
+                    "feedbackPrices": price_dict_list}
+            # printf(dict)
+            feedback_list.append(dict)
+        params = {"feedbacks": feedback_list}
+        p = json.dumps(params)
+        # printf(p)
+        feedbacks(p)
+        write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % params)
+        time.sleep(1)
+    except RuntimeError as e:
+        print("错误：%s" % e)
 
 
 def sn_search_list_thread(keyword, lowprice, highprice, num):

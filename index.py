@@ -6,13 +6,22 @@ from sn import sn_search_list
 from thread_pool import ThreadPool
 
 
-def index_deal(keyword, num):
+def index_deal(keyword):
     try:
         t = time.time()
-        for i in range(0, num):
-            kl_search_list(keyword)
-            sn_search_list(keyword)
-            time.sleep(10)
+        keylist = keyword.split("|")
+        for keyk in keylist:
+            keyr = keyk.split(",")
+            key = keyr[0]
+            low = keyr[1]
+            high = keyr[2]
+            if low == "":
+                low = "0"
+            if high == "":
+                high = "99999"
+            kl_search_list(key, low, high)
+            sn_search_list(key, low, high)
+            time.sleep(1)
         t1 = time.time()
         printf("本次任务完成 %s" % (t1 - t))
     except RuntimeError as e:
@@ -20,13 +29,11 @@ def index_deal(keyword, num):
 
 
 if __name__ == '__main__':
-    key = input("输入搜索的关键字：")
-    count = eval(input("创建几个任务："))
-    num = eval(input("一个任务循环多少次："))
-    t = time.time()
+    key = input("输入关键字(name,1000,2000|name2,2000,3000)：")
     Tp = ThreadPool(1)
-    for i in range(0, count):
+    i = 1
+    while True:
         printf("执行第%s轮任务" % i)
-        Tp.add_task(index_deal, key, num)
-    Tp.wait_completion()
-    printf(time.time() - t)
+        Tp.add_task(index_deal, key)
+        i += 1
+        time.sleep(10)
