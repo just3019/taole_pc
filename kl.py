@@ -31,7 +31,7 @@ paramsKL = (
 )
 
 
-def kl_search_list(keyword):
+def kl_search_list(keyword, lowprice, highprice):
     keylist = keyword.split(",")
     for k in keylist:
         try:
@@ -41,19 +41,26 @@ def kl_search_list(keyword):
                     "isSearch": 1,
                     "stock": 0,
                     "key": k,
-                    "searchRefer": {
-                        "searchRefer": "searchbutton"
-                    },
                     "shownActivityNum": -1,
-                    "spellCheck": 1
+                    "spellCheck": 1,
+                    "filterTypeList": [{
+                        "type": 2,
+                        "priceRanges": [{
+                            "highPrice": highprice,
+                            "lowPrice": lowprice
+                        }]
+                    }],
+                    "sortType": {
+                        "type": 4,
+                        "isDesc": 0
+                    }
                 },
-                "searchRefer": "searchbutton",
                 "pageSize": 40,
                 "pageNo": 1
             }
             klurl = 'https://gw.kaola.com/gw/search/list/goods'
             response = requests.post(klurl, headers=headers, params=paramsKL, data=json.dumps(data))
-            # printf(response.text)
+            printf(response.text)
             result = json.loads(response.text)
             goods = result["body"]["result"]["itemList"]
             feedback_list = []
@@ -82,11 +89,11 @@ def kl_search_list(keyword):
             printf("错误：%s" % e)
 
 
-def kl_deal(keyword, num):
+def kl_deal(keyword, lowprice, highprice, num):
     try:
         t = time.time()
         for i in range(0, num):
-            kl_search_list(keyword)
+            kl_search_list(keyword, lowprice, highprice)
             time.sleep(10)
         t1 = time.time()
         printf("本次任务完成 %s" % (t1 - t))
@@ -95,13 +102,14 @@ def kl_deal(keyword, num):
 
 
 if __name__ == '__main__':
-    key = input("输入搜索的关键字：")
-    count = eval(input("创建几个任务："))
-    num = eval(input("一个任务循环多少次："))
-    t = time.time()
-    Tp = ThreadPool(1)
-    for i in range(0, count):
-        printf("执行第%s轮任务" % i)
-        Tp.add_task(kl_deal, key, num)
-    Tp.wait_completion()
-    printf(time.time() - t)
+    kl_search_list("iphonexsmax", 2000, 10000)
+    # key = input("输入搜索的关键字：")
+    # count = eval(input("创建几个任务："))
+    # num = eval(input("一个任务循环多少次："))
+    # t = time.time()
+    # Tp = ThreadPool(1)
+    # for i in range(0, count):
+    #     printf("执行第%s轮任务" % i)
+    #     Tp.add_task(kl_deal, key, num)
+    # Tp.wait_completion()
+    # printf(time.time() - t)

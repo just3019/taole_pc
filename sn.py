@@ -17,7 +17,7 @@ headers = {
 }
 
 
-def sn_search_list(keyword):
+def sn_search_list(keyword, lowprice, highprice):
     keylist = keyword.split(",")
     for key in keylist:
         try:
@@ -26,10 +26,12 @@ def sn_search_list(keyword):
                 ('keyword', key),
                 ('ps', '40'),
                 ('set', '5'),
+                ('cf', '%s_%s' % (lowprice, highprice)),
+                ('st', '9'),  # st:排序   9：价格升序  10：价格倒序  0：综合排序 8：销量排序
             )
             snUrl = 'https://search.suning.com/emall/mobile/clientSearch.jsonp'
             response = requests.get(snUrl, headers=headers, params=params)
-            # print(response.text)
+            print(response.text)
             result = json.loads(response.text)
             goods = result["goods"]
             feedback_list = []
@@ -55,11 +57,11 @@ def sn_search_list(keyword):
             print("错误：%s" % e)
 
 
-def sn_search_list_thread(keyword, num):
+def sn_search_list_thread(keyword, lowprice, highprice, num):
     try:
         t = time.time()
         for i in range(0, num):
-            sn_search_list(keyword)
+            sn_search_list(keyword, lowprice, highprice)
         t1 = time.time()
         printf("本次任务完成 %s" % (t1 - t))
     except RuntimeError as e:
@@ -67,13 +69,14 @@ def sn_search_list_thread(keyword, num):
 
 
 if __name__ == '__main__':
-    key = input("输入搜索的关键字：")
-    count = eval(input("创建几个任务："))
-    num = eval(input("一个任务循环多少次："))
-    t = time.time()
-    Tp = ThreadPool(1)
-    for i in range(0, count):
-        printf("执行第%s轮任务" % i)
-        Tp.add_task(sn_search_list_thread, key, num)
-    Tp.wait_completion()
-    printf(time.time() - t)
+    sn_search_list("iphonexsmax", 2000, 10000)
+    # key = input("输入搜索的关键字：")
+    # count = eval(input("创建几个任务："))
+    # num = eval(input("一个任务循环多少次："))
+    # t = time.time()
+    # Tp = ThreadPool(1)
+    # for i in range(0, count):
+    #     printf("执行第%s轮任务" % i)
+    #     Tp.add_task(sn_search_list_thread, key, lowprice, highprice, num)
+    # Tp.wait_completion()
+    # printf(time.time() - t)
