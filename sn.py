@@ -16,40 +16,50 @@ headers = {
 }
 
 
+def sn_search(keyword, lowprice, highprice, page=0):
+    params = (
+        ('ct', "-1"),  # ct:是否苏宁服务  -1：非    2：是
+        ('keyword', keyword),
+        ('ps', '40'),
+        ('set', '5'),
+        ('cf', '%s_%s' % (lowprice, highprice)),
+        ('st', '9'),  # st:排序   9：价格升序  10：价格倒序  0：综合排序 8：销量排序
+        ('cp', page)
+    )
+    snUrl = 'https://search.suning.com/emall/mobile/clientSearch.jsonp'
+    response = requests.get(snUrl, headers=headers, params=params)
+    # printf(response.text)
+    return json.loads(response.text)
+
+
 def sn_search_list(keyword, lowprice, highprice, taskId=0):
     try:
-        params = (
-            ('ct', "-1"),  # ct:是否苏宁服务  -1：非    2：是
-            ('keyword', keyword),
-            ('ps', '40'),
-            ('set', '5'),
-            ('cf', '%s_%s' % (lowprice, highprice)),
-            ('st', '9'),  # st:排序   9：价格升序  10：价格倒序  0：综合排序 8：销量排序
-        )
-        snUrl = 'https://search.suning.com/emall/mobile/clientSearch.jsonp'
-        response = requests.get(snUrl, headers=headers, params=params)
-        # printf(response.text)
-        result = json.loads(response.text)
-        goods = result["goods"]
         feedback_list = []
-        for g in goods:
-            id = "%s-%s" % (g["salesCode10"], g["catentryId"])
-            name = g["catentdesc"]
-            price = g["price"]
-            url = "https://product.suning.com/%s/%s.html" % (g["salesCode10"], g["catentryId"])
-            price_dict_list = []
-            price_dict = {"price": price}
-            price_dict_list.append(price_dict)
-            dict = {"taskId": taskId, "url": url, "lowPrice": price, "price": price, "name": name, "productId": id,
-                    "feedbackPrices": price_dict_list}
-            # printf(dict)
-            feedback_list.append(dict)
+        page = 0
+        while True:
+            result = sn_search(keyword, lowprice, highprice, page)
+            goods = result["goods"]
+            for g in goods:
+                id = "%s-%s" % (g["salesCode10"], g["catentryId"])
+                name = g["catentdesc"]
+                price = g["price"]
+                originalPrice = price  # 原价
+                url = "https://product.suning.com/%s/%s.html" % (g["salesCode10"], g["catentryId"])
+                price_dict_list = []
+                price_dict = {"price": price}
+                price_dict_list.append(price_dict)
+                dict = {"taskId": taskId, "url": url, "lowPrice": price, "price": price, "originalPrice": originalPrice,
+                        "name": name, "productId": id, "feedbackPrices": price_dict_list}
+                feedback_list.append(dict)
+            time.sleep(1)
+            page += 1
+            if len(goods) != 40:
+                break
         params = {"feedbacks": feedback_list}
         p = json.dumps(params)
         # printf(p)
         feedbacks(p)
         write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % params)
-        time.sleep(1)
     except RuntimeError as e:
         print("错误：%s" % e)
 
