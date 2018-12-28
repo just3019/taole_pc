@@ -30,7 +30,7 @@ def index_deal(keyword, taskId=0):
                 high = "99999"
             kl_search_list(key, low, high, taskId)
             sn_search_list(key, low, high, taskId)
-            time.sleep(1)
+            # time.sleep(1)
         t1 = time.time()
         log("本次任务完成 %s" % (t1 - t))
     except RuntimeError as e:
@@ -82,7 +82,7 @@ def thread(taskId, key):
         log("执行第%s轮任务" % i)
         Tp.add_task(index_deal, key, taskId)
         i += 1
-        time.sleep(10)
+        time.sleep(5)
 
 
 if __name__ == '__main__':

@@ -28,7 +28,7 @@ def sn_search(keyword, lowprice, highprice, page=0):
     )
     snUrl = 'https://search.suning.com/emall/mobile/clientSearch.jsonp'
     response = requests.get(snUrl, headers=headers, params=params)
-    # printf(response.text)
+    # printf("苏宁：" + response.text)
     return json.loads(response.text)
 
 
@@ -52,9 +52,9 @@ def sn_search_list(keyword, lowprice, highprice, taskId=0):
                         "name": name, "productId": id, "feedbackPrices": price_dict_list}
                 feedback_list.append(dict)
             time.sleep(1)
-            page += 1
-            if len(goods) != 40:
+            if len(goods) != 40 or page == 4:
                 break
+            page += 1
         params = {"feedbacks": feedback_list}
         p = json.dumps(params)
         # printf(p)

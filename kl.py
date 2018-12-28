@@ -29,6 +29,8 @@ paramsKL = (
     ('version', '1.0'),
 )
 
+pagesize = 100
+
 
 def kl_search(keyword, lowprice, highprice, page=1):
     data = {
@@ -45,26 +47,23 @@ def kl_search(keyword, lowprice, highprice, page=1):
                     "highPrice": highprice,
                     "lowPrice": lowprice
                 }]
-            }],
-            "sortType": {
-                "type": 4,
-                "isDesc": 0
-            }
+            }]
         },
-        "pageSize": 40,
+        "pageSize": pagesize,
         "pageNo": page
     }
     klurl = 'https://gw.kaola.com/gw/search/list/goods'
     response = requests.post(klurl, headers=headers, params=paramsKL, data=json.dumps(data))
-    printf(response.text)
+    printf("考拉：" + response.text)
     return json.loads(response.text)
 
 
 def kl_search_list(keyword, lowprice, highprice, taskId=0):
     feedback_list = []
+    page = 1
     try:
         while True:
-            result = kl_search(keyword, lowprice, highprice)
+            result = kl_search(keyword, lowprice, highprice, page)
             goods = result["body"]["result"]["itemList"]
             for g in goods:
                 if "goodsModuleItem" not in g:
@@ -83,11 +82,12 @@ def kl_search_list(keyword, lowprice, highprice, taskId=0):
                 # printf(dict)
                 feedback_list.append(dict)
             time.sleep(1)
-            if len(goods) != 40:
+            if len(goods) != pagesize or page == 5:
                 break
+            page += 1
         params = {"feedbacks": feedback_list}
         p = json.dumps(params)
-        printf(p)
+        # printf(p)
         feedbacks(p)
         write("kl-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % params)
     except RuntimeError as e:
@@ -107,7 +107,7 @@ def kl_deal(keyword, lowprice, highprice, num):
 
 
 if __name__ == '__main__':
-    kl_search_list("兰蔻诗情爱意", 100, 1000)
+    kl_search_list("iphone", 100, 10000)
     # key = input("输入搜索的关键字：")
     # count = eval(input("创建几个任务："))
     # num = eval(input("一个任务循环多少次："))
