@@ -54,7 +54,7 @@ def kl_search(keyword, lowprice, highprice, page=1):
     }
     klurl = 'https://gw.kaola.com/gw/search/list/goods'
     response = requests.post(klurl, headers=headers, params=paramsKL, data=json.dumps(data))
-    printf("考拉：" + response.text)
+    # printf("考拉：" + response.text)
     return json.loads(response.text)
 
 
