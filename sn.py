@@ -59,7 +59,7 @@ def sn_search_list(keyword, lowprice, highprice, taskId=0):
         p = json.dumps(params)
         # printf(p)
         feedbacks(p)
-        write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % params)
+        write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
     except RuntimeError as e:
         print("错误：%s" % e)
 

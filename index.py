@@ -3,6 +3,7 @@ import time
 from tkinter import *
 
 from base import printf
+from gm import gm_search_list
 from kl import kl_search_list
 from sn import sn_search_list
 from thread_pool import ThreadPool
@@ -30,6 +31,7 @@ def index_deal(keyword, taskId=0):
                 high = "99999"
             kl_search_list(key, low, high, taskId)
             sn_search_list(key, low, high, taskId)
+            gm_search_list(key, low, high, taskId)
             # time.sleep(1)
         t1 = time.time()
         log("本次任务完成 %s" % (t1 - t))
