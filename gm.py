@@ -76,12 +76,12 @@ def gm_search_list(keyword, lowprice, highprice, taskId=0):
             totalCount = result["pageBar"]["totalCount"]
             # printf("totalCount：%s" % totalCount)
             # printf(totalCount == 0)
-            if totalCount == 0:
-                fail_count += 1
-                # printf("fail_count：%s" % fail_count)
-                continue
             if len(goods) != pagesize or fail_count > 5:
                 break
+            if totalCount == 0:
+                fail_count += 1
+                printf("fail_count：%s" % fail_count)
+                continue
             page += 1
             # printf(page)
         params = {"feedbacks": feedback_list}
