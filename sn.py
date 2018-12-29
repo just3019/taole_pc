@@ -52,7 +52,7 @@ def sn_search_list(keyword, lowprice, highprice, taskId=0):
                         "name": name, "productId": id, "feedbackPrices": price_dict_list}
                 feedback_list.append(dict)
             time.sleep(1)
-            if len(goods) != 40 or page == 4:
+            if len(goods) != 40:
                 break
             page += 1
         params = {"feedbacks": feedback_list}

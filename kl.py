@@ -82,7 +82,7 @@ def kl_search_list(keyword, lowprice, highprice, taskId=0):
                 # printf(dict)
                 feedback_list.append(dict)
             time.sleep(1)
-            if len(goods) != pagesize or page == 5:
+            if len(goods) != pagesize:
                 break
             page += 1
         params = {"feedbacks": feedback_list}
