@@ -34,7 +34,7 @@ def ymx_search(keyword, page):
     )
 
     response = requests.get('https://www.amazon.cn/s/ref=sr_st_price-desc-rank', headers=headers, params=params)
-    printf(response.text)
+    # printf(response.text)
     return json.loads(response.text)
 
 
