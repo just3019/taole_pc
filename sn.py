@@ -15,12 +15,14 @@ headers = {
     'Accept-Language': 'zh-Hans-CN;q=1, en-CN;q=0.9',
 }
 
+pagesize = 40
+
 
 def sn_search(keyword, lowprice, highprice, page=0):
     params = (
         ('ct', "-1"),  # ct:是否苏宁服务  -1：非    2：是
         ('keyword', keyword),
-        ('ps', '40'),
+        ('ps', pagesize),
         ('set', '5'),
         ('cf', '%s_%s' % (lowprice, highprice)),
         ('st', '9'),  # st:排序   9：价格升序  10：价格倒序  0：综合排序 8：销量排序
@@ -52,7 +54,7 @@ def sn_search_list(keyword, lowprice, highprice, taskId=0):
                         "name": name, "productId": id, "feedbackPrices": price_dict_list}
                 feedback_list.append(dict)
             time.sleep(1)
-            if len(goods) != 40:
+            if len(goods) != pagesize:
                 break
             page += 1
         params = {"feedbacks": feedback_list}

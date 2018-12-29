@@ -7,6 +7,7 @@ from gm import gm_search_list
 from kl import kl_search_list
 from sn import sn_search_list
 from thread_pool import ThreadPool
+from ymx import ymx_search_list
 
 
 def log(s):
@@ -32,6 +33,7 @@ def index_deal(keyword, taskId=0):
             kl_search_list(key, low, high, taskId)
             sn_search_list(key, low, high, taskId)
             gm_search_list(key, low, high, taskId)
+            ymx_search_list(key, low, high, taskId)
             # time.sleep(1)
         t1 = time.time()
         log("本次任务完成 %s" % (t1 - t))
@@ -70,7 +72,9 @@ def ui():
 
 
 def submit():
-    task_id = int(task.get())
+    task_id = task.get()
+    if task_id is None:
+        task_id = 0
     key = entry.get()
     t = threading.Thread(target=thread, args=(task_id, key,))
     t.setDaemon(True)
