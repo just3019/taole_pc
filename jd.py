@@ -1,10 +1,19 @@
 import json
+import threading
 import time
+from tkinter import *
 
 from base import printf, write
 from taole import feedbacks
 from thread_pool import ThreadPool
 from web_driver import init_web_driver, close_web_driver
+
+
+def log(s):
+    printf(s)
+    textView.insert(END, '[%s][%s]%s\n' % (threading.current_thread().name, time.strftime("%X"), s))
+    textView.update()
+    textView.see(END)
 
 
 def jd_search_list(keyword):
@@ -53,14 +62,52 @@ def jd_deal(keyword, num):
         printf("本次任务完成 %s" % (t1 - t))
 
 
-if __name__ == '__main__':
-    key = input("输入搜索的关键字：")
-    count = eval(input("创建几个任务："))
-    num = eval(input("一个任务循环多少次："))
-    t = time.time()
+def ui():
+    root = Tk()  # 创建窗口对象的背景色
+    root.title('监控工具')
+    root.geometry('320x210')
+
+    fm1 = Frame(root)
+    fm1.pack(fill=X)
+    Label(fm1, text='任务id').pack(side=LEFT)
+    global task
+    task = Entry(fm1, width=4)
+    task.pack(side=LEFT)
+    Label(fm1, text='搜索内容').pack(side=LEFT)
+    global entry
+    entry = Entry(fm1, width=100)
+    entry.pack(side=LEFT)
+
+    global s1
+    s1 = Scrollbar(root)
+    s1.pack(side=RIGHT, fill=Y)
+    global textView
+    textView = Text(root, height=10, yscrollcommand=s1.set)
+    textView.pack(expand=YES, fill=X)
+    s1.config(command=textView.yview)
+
+    fm2 = Frame(root)
+    fm2.pack()
+    Button(fm2, text='开始', command=submit).pack(side=LEFT)
+    root.mainloop()
+
+
+def submit():
+    key = entry.get()
+    t = threading.Thread(target=thread, args=(key,))
+    t.setDaemon(True)
+    t.start()
+
+
+def thread(key):
     Tp = ThreadPool(1)
-    for i in range(0, count):
-        printf("执行第%s轮任务" % i)
-        Tp.add_task(jd_deal, key, num)
-    Tp.wait_completion()
-    printf(time.time() - t)
+    i = 1
+    while True:
+        log("执行第%s轮任务" % i)
+        Tp.add_task(jd_deal, key, 100)
+        i += 1
+        time.sleep(5)
+
+
+if __name__ == '__main__':
+    ui()
