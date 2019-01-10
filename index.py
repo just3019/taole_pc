@@ -4,10 +4,13 @@ from tkinter import *
 
 from base import printf
 from gm import gm_search_list
+from jd_new import jd_new_search_list
 from kl import kl_search_list
 from sn import sn_search_list
 from thread_pool import ThreadPool
 from ymx import ymx_search_list
+
+searchTp = ThreadPool(1)
 
 
 def log(s):
@@ -30,11 +33,18 @@ def index_deal(keyword, taskId=0):
                 low = "0"
             if high == "":
                 high = "99999"
-            kl_search_list(key, low, high, taskId)
-            sn_search_list(key, low, high, taskId)
-            gm_search_list(key, low, high, taskId)
-            ymx_search_list(key, low, high, taskId)
+            searchTp.add_task(kl_search_list, key, low, high, taskId)
+            searchTp.add_task(sn_search_list, key, low, high, taskId)
+            searchTp.add_task(gm_search_list, key, low, high, taskId)
+            searchTp.add_task(ymx_search_list, key, low, high, taskId)
+            searchTp.add_task(jd_new_search_list, key, low, high, taskId)
+            # kl_search_list(key, low, high, taskId)
+            # sn_search_list(key, low, high, taskId)
+            # gm_search_list(key, low, high, taskId)
+            # ymx_search_list(key, low, high, taskId)
+            # jd_new_search_list(key, low, high, taskId)
             # time.sleep(1)
+        searchTp.wait_completion()
         t1 = time.time()
         log("本次任务完成 %s" % (t1 - t))
     except RuntimeError as e:
