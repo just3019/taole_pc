@@ -114,7 +114,7 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
     feedback_list = []
     for gl in first:
         id = gl.get("data-sku")
-        name = gl.find_all("em").pop()
+        name = gl.find_all("em").pop().text
         price = gl.find("strong").find("i").text
         originalPrice = price
         url = "http://item.jd.com/%s.html" % id
@@ -123,7 +123,7 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
         price_dict_list.append(price_dict)
         dict = {"taskId": taskId, "url": url, "lowPrice": price, "price": price, "originalPrice": originalPrice,
                 "name": name, "productId": id, "feedbackPrices": price_dict_list}
-        printf(dict)
+        # printf(dict)
         feedback_list.append(dict)
     params = {"feedbacks": feedback_list}
     p = json.dumps(params)
@@ -133,5 +133,5 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
 
 
 if __name__ == '__main__':
-    # jd_new_search_list("华为手机p20", 3000, 5000)
-    jd_search("华为手机p20", 3000, 5000)
+    jd_new_search_list("华为手机p20", 3000, 5000)
+    # jd_search("华为手机p20", 3000, 5000)
