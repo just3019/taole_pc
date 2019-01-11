@@ -4,7 +4,7 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from base import write
+from base import write, printf
 from taole import feedbacks
 
 headers = {
@@ -36,6 +36,11 @@ def jd_search(keyword, lowprice, highprice):
     r = s.get('https://search.jd.com/search', headers=headers, params=params)
     r.encoding = 'utf-8'
     soup = BeautifulSoup(r.text, 'html.parser')
+    # gl_list = soup.find_all("li", class_="gl-item")
+    # for gl in gl_list:
+    #     # price = gl.find_all("i")[0].text
+    #     price = gl.find("strong").find("i").text
+    #     print(price)
     return soup.find_all("li", class_="gl-item")
 
 
@@ -109,8 +114,8 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
     feedback_list = []
     for gl in first:
         id = gl.get("data-sku")
-        name = gl.find_all("em")[1].text
-        price = gl.find_all("i")[0].text
+        name = gl.find_all("em").pop()
+        price = gl.find("strong").find("i").text
         originalPrice = price
         url = "http://item.jd.com/%s.html" % id
         price_dict_list = []
@@ -118,7 +123,7 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
         price_dict_list.append(price_dict)
         dict = {"taskId": taskId, "url": url, "lowPrice": price, "price": price, "originalPrice": originalPrice,
                 "name": name, "productId": id, "feedbackPrices": price_dict_list}
-        # printf(dict)
+        printf(dict)
         feedback_list.append(dict)
     params = {"feedbacks": feedback_list}
     p = json.dumps(params)
@@ -128,4 +133,5 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
 
 
 if __name__ == '__main__':
-    jd_new_search_list("华为手机p20", 2000, 5000)
+    # jd_new_search_list("华为手机p20", 3000, 5000)
+    jd_search("华为手机p20", 3000, 5000)
