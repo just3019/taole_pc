@@ -4,7 +4,7 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from base import write, printf
+from base import write
 from taole import feedbacks
 
 headers = {
@@ -38,9 +38,17 @@ def jd_search(keyword, lowprice, highprice):
     soup = BeautifulSoup(r.text, 'html.parser')
     # gl_list = soup.find_all("li", class_="gl-item")
     # for gl in gl_list:
-    #     # price = gl.find_all("i")[0].text
+    #     # print(gl)
+    #     nameHTML = gl.find_all("em")
+    #     nameSize = len(nameHTML)
+    #     print(nameSize)
+    #     name = ""
+    #     for i in range(1, nameSize):
+    #         name += nameHTML[i].text
     #     price = gl.find("strong").find("i").text
-    #     print(price)
+    #     # if name == "":
+    #     #     print(gl)
+    #     print(name + "\n" + price)
     return soup.find_all("li", class_="gl-item")
 
 
@@ -114,7 +122,12 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
     feedback_list = []
     for gl in first:
         id = gl.get("data-sku")
-        name = gl.find_all("em").pop().text
+        nameHTML = gl.find_all("em")
+        nameSize = len(nameHTML)
+        print(nameSize)
+        name = ""
+        for i in range(1, nameSize):
+            name += nameHTML[i].text
         price = gl.find("strong").find("i").text
         originalPrice = price
         url = "http://item.jd.com/%s.html" % id
@@ -133,5 +146,13 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
 
 
 if __name__ == '__main__':
-    jd_new_search_list("华为手机p20", 3000, 5000)
-    # jd_search("华为手机p20", 3000, 5000)
+    k = "三星电视,1000,10000"
+    # kk = k.split("|")
+    # for i in kk:
+    #     r = i.split(",")
+    #     keyword = r[0]
+    #     lowprice = r[1]
+    #     highprice = r[2]
+    #     printf("执行keyword：%s" % keyword)
+    #     jd_new_search_list(keyword, lowprice, highprice)
+    jd_search("三星电视", 1000, 10000)
