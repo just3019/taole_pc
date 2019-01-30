@@ -53,6 +53,14 @@ def sn_search_list(keyword, lowprice, highprice, taskId=0):
                 dict = {"taskId": taskId, "url": url, "lowPrice": price, "price": price, "originalPrice": originalPrice,
                         "name": name, "productId": id, "feedbackPrices": price_dict_list}
                 feedback_list.append(dict)
+                # 当商品数大于1000，则在1000的时候先发送服务器
+                if len(feedback_list) == 1000:
+                    params = {"feedbacks": feedback_list}
+                    p = json.dumps(params)
+                    # printf(p)
+                    feedbacks(p)
+                    write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
+                    feedback_list = []
             time.sleep(2)
             if len(goods) != pagesize:
                 break
@@ -78,7 +86,7 @@ def sn_search_list_thread(keyword, lowprice, highprice, num):
 
 
 if __name__ == '__main__':
-    sn_search_list("iphonexsmax", 2000, 10000)
+    sn_search_list("电视55寸", 1000, 5000)
     # key = input("输入搜索的关键字：")
     # count = eval(input("创建几个任务："))
     # num = eval(input("一个任务循环多少次："))

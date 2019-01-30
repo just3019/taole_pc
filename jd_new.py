@@ -124,7 +124,6 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
         id = gl.get("data-sku")
         nameHTML = gl.find_all("em")
         nameSize = len(nameHTML)
-        print(nameSize)
         name = ""
         for i in range(1, nameSize):
             name += nameHTML[i].text
@@ -138,6 +137,14 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
                 "name": name, "productId": id, "feedbackPrices": price_dict_list}
         # printf(dict)
         feedback_list.append(dict)
+        # 当商品数大于1000，则在1000的时候先发送服务器
+        if len(feedback_list) == 1000:
+            params = {"feedbacks": feedback_list}
+            p = json.dumps(params)
+            # printf(p)
+            feedbacks(p)
+            write("jd-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
+            feedback_list = []
     params = {"feedbacks": feedback_list}
     p = json.dumps(params)
     # printf(p)
@@ -146,7 +153,7 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
 
 
 if __name__ == '__main__':
-    k = "三星电视,1000,10000"
+    k = "电视55寸,1000,10000"
     # kk = k.split("|")
     # for i in kk:
     #     r = i.split(",")
@@ -155,4 +162,4 @@ if __name__ == '__main__':
     #     highprice = r[2]
     #     printf("执行keyword：%s" % keyword)
     #     jd_new_search_list(keyword, lowprice, highprice)
-    jd_search("三星电视", 1000, 10000)
+    jd_new_search_list("电视55寸", 1000, 1500)
