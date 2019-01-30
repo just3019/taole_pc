@@ -86,7 +86,8 @@ def sn_search_list_thread(keyword, lowprice, highprice, num):
 
 
 if __name__ == '__main__':
-    sn_search_list("电视55寸", 1000, 5000)
+    sn_search("三星电视55寸", 0, 9999)
+    # sn_search_list("三星电视55寸", 0, 99999, 5)
     # key = input("输入搜索的关键字：")
     # count = eval(input("创建几个任务："))
     # num = eval(input("一个任务循环多少次："))
