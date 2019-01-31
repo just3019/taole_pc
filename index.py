@@ -5,8 +5,7 @@ from tkinter import *
 from base import printf
 from gm import gm_search_list
 from jd_new import jd_new_search_list
-from kl import kl_search_list
-from sn import sn_search_list
+from sn_new import sn_search_list
 from thread_pool import ThreadPool
 from ymx import ymx_search_list
 
@@ -33,7 +32,7 @@ def index_deal(keyword, taskId=0):
                 low = "0"
             if high == "":
                 high = "99999"
-            searchTp.add_task(kl_search_list, key, low, high, taskId)
+            # searchTp.add_task(kl_search_list, key, low, high, taskId)
             searchTp.add_task(sn_search_list, key, low, high, taskId)
             searchTp.add_task(gm_search_list, key, low, high, taskId)
             searchTp.add_task(ymx_search_list, key, low, high, taskId)

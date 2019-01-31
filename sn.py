@@ -3,7 +3,7 @@ import time
 
 import requests
 
-from base import printf, write
+from base import printf
 from taole import feedbacks
 
 headers = {
@@ -30,7 +30,7 @@ def sn_search(keyword, lowprice, highprice, page=0):
     )
     snUrl = 'https://search.suning.com/emall/mobile/clientSearch.jsonp'
     response = requests.get(snUrl, headers=headers, params=params, timeout=2)
-    # printf("苏宁：" + response.text)
+    printf("苏宁：" + response.text)
     return json.loads(response.text)
 
 
@@ -59,7 +59,6 @@ def sn_search_list(keyword, lowprice, highprice, taskId=0):
                     p = json.dumps(params)
                     # printf(p)
                     feedbacks(p)
-                    write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
                     feedback_list = []
             time.sleep(2)
             if len(goods) != pagesize:
@@ -69,7 +68,6 @@ def sn_search_list(keyword, lowprice, highprice, taskId=0):
         p = json.dumps(params)
         # printf(p)
         feedbacks(p)
-        write("sn-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
     except RuntimeError as e:
         print("错误：%s" % e)
 
@@ -86,15 +84,12 @@ def sn_search_list_thread(keyword, lowprice, highprice, num):
 
 
 if __name__ == '__main__':
-    sn_search("三星电视55寸", 0, 9999)
-    # sn_search_list("三星电视55寸", 0, 99999, 5)
-    # key = input("输入搜索的关键字：")
-    # count = eval(input("创建几个任务："))
-    # num = eval(input("一个任务循环多少次："))
-    # t = time.time()
-    # Tp = ThreadPool(1)
-    # for i in range(0, count):
-    #     printf("执行第%s轮任务" % i)
-    #     Tp.add_task(sn_search_list_thread, key, lowprice, highprice, num)
-    # Tp.wait_completion()
-    # printf(time.time() - t)
+    r = sn_search("三星电视55寸", 0, 9999)
+    list = r["goods"]
+    for g in list:
+        id = "%s-%s" % (g["salesCode10"], g["catentryId"])
+        code = "%s__2_%s" % (g["catentryId"], g["salesCode10"])
+        name = g["catentdesc"]
+        price = g["price"]
+        url = "https://product.suning.com/%s/%s.html" % (g["salesCode10"], g["catentryId"])
+        printf("%s" % code)

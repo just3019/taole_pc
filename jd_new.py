@@ -4,7 +4,6 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from base import write
 from taole import feedbacks
 
 headers = {
@@ -143,13 +142,11 @@ def jd_new_search_list(keyword, lowprice, highprice, taskId=0):
             p = json.dumps(params)
             # printf(p)
             feedbacks(p)
-            write("jd-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
             feedback_list = []
     params = {"feedbacks": feedback_list}
     p = json.dumps(params)
     # printf(p)
     feedbacks(p)
-    write("jd-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
 
 
 if __name__ == '__main__':

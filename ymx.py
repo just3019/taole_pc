@@ -3,7 +3,6 @@ import time
 
 import requests
 
-from base import printf, write
 from taole import feedbacks
 
 headers = {
@@ -76,7 +75,6 @@ def ymx_search_list(keyword, lowprice, highprice, taskId=0):
         p = json.dumps(params)
         # printf(p)
         feedbacks(p)
-        write("ymx-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
     except RuntimeError as e:
         print("错误：%s" % e)
 

@@ -3,7 +3,7 @@ import time
 
 import requests
 
-from base import printf, write
+from base import printf
 from taole import feedbacks
 
 headers = {
@@ -88,7 +88,7 @@ def gm_search_list(keyword, lowprice, highprice, taskId=0):
         p = json.dumps(params)
         # printf(p)
         feedbacks(p)
-        write("gm-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
+        # write("gm-%s%s.log" % (keyword, time.strftime("%Y%m%d")), "%s\n" % p)
     except RuntimeError as e:
         printf("错误：%s" % e)
 
